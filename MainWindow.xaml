@@ -1,0 +1,47 @@
+﻿<Window x:Class="BudgetApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Budget App" Height="600" Width="500" Background="#f7f7f7">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Monthly Income:" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBox x:Name="IncomeTextBox" Width="150" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
+            <TextBox x:Name="ExpenseNameTextBox" Width="150" Margin="0,0,10,0" Text="Expense Name"
+         Foreground="Gray" GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+
+            <TextBox x:Name="ExpenseAmountTextBox" Width="100" Margin="0,0,10,0" Text="Amount"
+         Foreground="Gray" GotFocus="RemovePlaceholderText" LostFocus="AddPlaceholderText"/>
+
+            <Button Content="Add Expense" Click="AddExpense_Click" Width="120"/>
+        </StackPanel>
+
+        <ListView x:Name="ExpensesList" Grid.Row="2" Margin="0,0,0,10" Height="300">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Amount" Width="100" DisplayMemberBinding="{Binding Amount}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <StackPanel Grid.Row="3" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <Button Content="Remove Selected" Click="RemoveExpense_Click" Width="150" Margin="0,0,10,0"/>
+                <Button Content="Export to CSV" Click="ExportToCsv_Click" Width="150"/>
+            </StackPanel>
+
+            <TextBlock x:Name="TotalExpensesText" FontSize="16" Margin="0,5,0,0"/>
+            <TextBlock x:Name="RemainingText" FontSize="16" FontWeight="Bold"/>
+        </StackPanel>
+    </Grid>
+</Window>
