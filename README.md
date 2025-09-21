@@ -1,7 +1,7 @@
 # 💰 BudgetApplication
 
 A simple **budget management desktop app** built with **C# .NET WPF**.  
-This application allows you to track your income, add/remove expenses, and export your budget to a CSV file for easy record-keeping.
+This application allows you to track your income, add/remove expenses, and export your budget to a CSV or PDF File, for easy record-keeping.
 
 ---
 
@@ -14,7 +14,9 @@ This application allows you to track your income, add/remove expenses, and expor
 - **Input validation** (prevents empty or invalid values)  
 - **Placeholder text** in inputs for a clean UI experience  
 - **Export to CSV**:
-  - Saves a `.csv` file to your Desktop  
+  - Saves a `.csv` file to your Desktop
+- **Export to PDF**:
+  - Saves a `.pdf` file to your Desktop  
   - Includes income, expenses, total expenses, and remaining balance  
 
 ---
@@ -25,6 +27,7 @@ This application allows you to track your income, add/remove expenses, and expor
 - XAML for UI design
 - ObservableCollection for live expense tracking
 - CSV export using `System.IO.StreamWriter`
+- PDF export using `QuestPDF` Library
 
 ---
 
@@ -37,4 +40,4 @@ This application allows you to track your income, add/remove expenses, and expor
 ### Run locally
 1. Clone this repository:
    ```bash
-   git clone https://github.com/RobinRingwelski/BudgetApplication.git
+   git clone https://github.com/Built4Desktop/BudgetApplication.git
