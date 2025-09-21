@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace BudgetApplication
 {
@@ -47,6 +51,7 @@ namespace BudgetApplication
                 MessageBox.Show("Please select an expense to remove.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
         private void RemovePlaceholderText(object sender, RoutedEventArgs e)
         {
             if (sender is System.Windows.Controls.TextBox tb &&
@@ -102,6 +107,89 @@ namespace BudgetApplication
             }
         }
 
+        private void ExportToPdf_Click(object sender, RoutedEventArgs e)
+        {
+            ExportToPdf(Expenses.ToList(), PdfTitleTextBox.Text);
+        }
+
+        private void ExportToPdf(List<Expense> expenses, string title)
+        {
+            var filePath = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                "BudgetExport.pdf"
+            );
+
+            try
+            {
+                Document.Create(container =>
+                {
+                    container.Page(page =>
+                    {
+                        page.Margin(30);
+                        page.Size(PageSizes.A4);
+
+                        page.Header().Element(container =>
+                        container.PaddingBottom(15).AlignCenter().Text(titleText =>
+                        {
+                         titleText.Span(string.IsNullOrWhiteSpace(title) ? "Budget Report" : title)
+                        .FontSize(20)
+                        .SemiBold();
+                        }));
+
+                        page.Content()
+                            .Table(table =>
+                            {
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn();
+                                    columns.ConstantColumn(100);
+                                });
+
+                                // Header
+                                table.Header(header =>
+                                {
+                                    header.Cell().Element(CellStyle).Text("Expense Name").FontSize(14).SemiBold();
+                                    header.Cell().Element(CellStyle).Text("Amount").FontSize(14).SemiBold();
+                                });
+
+                                // Expense Rows
+                                foreach (var expense in expenses)
+                                {
+                                    table.Cell().Element(CellStyle).Text(expense.Name);
+                                    table.Cell().Element(CellStyle).Text($"{expense.Amount:F2} DKK");
+                                }
+
+                                // Summary Footer
+                                decimal sumOfExpenses = expenses.Sum(expense => expense.Amount);
+                                decimal.TryParse(IncomeTextBox.Text, out decimal income);
+                                decimal remaining = income - sumOfExpenses;
+
+                                table.Cell().Element(CellStyle).Text("Total Expenses").FontSize(14).SemiBold();
+                                table.Cell().Element(CellStyle).Text($"{sumOfExpenses:F2} DKK").FontSize(14).SemiBold();
+
+                                table.Cell().Element(CellStyle).Text("Remaining Balance").FontSize(14).SemiBold();
+                                var remainingCell = table.Cell().Element(CellStyle).Text($"{remaining:F2} DKK").FontSize(14).SemiBold();
+
+                                remainingCell = remaining >= 0
+                                    ? remainingCell.FontColor(Colors.Green.Darken2)
+                                    : remainingCell.FontColor(Colors.Red.Darken2);
+
+                                static IContainer CellStyle(IContainer container)
+                                {
+                                    return container.PaddingVertical(5).BorderBottom(1).BorderColor("#E0E0E0");
+                                }
+                            });
+                    });
+                })
+                .GeneratePdf(filePath);
+
+                MessageBox.Show($"PDF exported to:\n{filePath}", "Export Successful", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error exporting PDF: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void CalculateBudget()
         {
@@ -113,12 +201,7 @@ namespace BudgetApplication
                     income = decimal.Parse(IncomeTextBox.Text);
                 }
 
-                decimal totalExpenses = 0;
-                foreach (var expense in Expenses)
-                {
-                    totalExpenses += expense.Amount;
-                }
-
+                decimal totalExpenses = Expenses.Sum(x => x.Amount);
                 decimal remaining = income - totalExpenses;
 
                 TotalExpensesText.Text = $"Total Expenses: {totalExpenses:C}";

@@ -10,10 +10,21 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
-            <TextBlock Text="Monthly Income:" VerticalAlignment="Center" FontWeight="Bold"/>
-            <TextBox x:Name="IncomeTextBox" Width="150" Margin="10,0,0,0"/>
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <!-- Monthly Income -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <TextBlock Text="Monthly Income:" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox x:Name="IncomeTextBox" Width="150" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- PDF Title -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="PDF Title:" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBox x:Name="PdfTitleTextBox" Width="200" Margin="36,0,0,0" Text="My Budget Report"/>
+            </StackPanel>
         </StackPanel>
+
+
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
             <TextBox x:Name="ExpenseNameTextBox" Width="150" Margin="0,0,10,0" Text="Expense Name"
@@ -35,13 +46,21 @@
         </ListView>
 
         <StackPanel Grid.Row="3" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-                <Button Content="Remove Selected" Click="RemoveExpense_Click" Width="150" Margin="0,0,10,0"/>
-                <Button Content="Export to CSV" Click="ExportToCsv_Click" Width="150"/>
-            </StackPanel>
+            <Grid Grid.IsSharedSizeScope="True" Margin="0,0,0,10" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="Buttons" Width="Auto"/>
+                    <ColumnDefinition SharedSizeGroup="Buttons" Width="Auto"/>
+                    <ColumnDefinition SharedSizeGroup="Buttons" Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Remove Selected" Click="RemoveExpense_Click" Margin="5"/>
+                <Button Grid.Column="1" Content="Export to CSV" Click="ExportToCsv_Click" Margin="5"/>
+                <Button Grid.Column="2" Content="Export to PDF" Click="ExportToPdf_Click" Margin="5"/>
+            </Grid>
 
             <TextBlock x:Name="TotalExpensesText" FontSize="16" Margin="0,5,0,0"/>
             <TextBlock x:Name="RemainingText" FontSize="16" FontWeight="Bold"/>
         </StackPanel>
+
     </Grid>
 </Window>
